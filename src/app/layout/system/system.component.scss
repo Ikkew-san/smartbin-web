@@ -1,0 +1,19 @@
+.img {
+  display: flex;
+  justify-content: center;
+
+  img {
+    margin-top: 1.25rem;
+    height: 15rem;
+  }
+}
+
+.card-header {
+  font-weight: bold;
+  background: #5c968a;
+  color: rgb(250, 250, 250);
+}
+
+label {
+  white-space: nowrap;
+}

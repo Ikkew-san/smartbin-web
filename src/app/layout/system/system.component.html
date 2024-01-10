@@ -1,0 +1,94 @@
+<div class="container">
+  <form #f="ngForm" (ngSubmit)="f.form.valid && onSubmit()" novalidate>
+
+    <div class="card">
+      <div class="card-header">
+        ข้อมูลระบบ
+      </div>
+
+      <div class="card-body">
+        <div class="form-group row justify-content-md-center">
+          <label for="" class="col-md-2 col-form-label">ชื่อระบบ</label>
+          <div class="col-md-6">
+            <input type="text" class="form-control" name="name" [(ngModel)]="model.name" #name="ngModel"
+              [ngClass]="{ 'is-invalid': f.submitted && name.invalid }" required />
+            <div *ngIf="f.submitted && name.invalid" class="invalid-feedback">
+              <div *ngIf="name.errors.required">กรุณากรอกชื่อระบบ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row justify-content-md-center">
+          <label for="" class="col-md-2 col-form-label">ที่ตั้ง</label>
+          <div class="col-md-6">
+            <input type="text" class="form-control" name="address" [(ngModel)]="model.address" #address="ngModel"
+              [ngClass]="{ 'is-invalid': f.submitted && address.invalid }" required />
+            <div *ngIf="f.submitted && address.invalid" class="invalid-feedback">
+              <div *ngIf="address.errors.required">กรุณากรอกที่ตั้ง</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row justify-content-md-center">
+          <label for="" class="col-md-2 col-form-label">เบอร์โทรศัพท์</label>
+          <div class="col-md-6">
+            <input type="text" class="form-control" name="telephone" [(ngModel)]="model.telephone" #telephone="ngModel"
+              [ngClass]="{ 'is-invalid': f.submitted && telephone.invalid }" required minlength="9" maxlength="10"
+              pattern="[0-9]+" />
+            <div *ngIf="f.submitted && telephone.invalid" class="invalid-feedback">
+              <div *ngIf="telephone.errors.required">กรุณากรอกเบอร์โทรศัพท์</div>
+              <div *ngIf="telephone.errors.pattern">กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง</div>
+              <div *ngIf="telephone.errors.minlength">กรุณากรอกเบอร์โทรศัพท์ให้ครบ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row justify-content-md-center">
+          <label for="" class="col-md-2 col-form-label">คะแนน/ขวด</label>
+          <div class="col-md-6">
+            <input type="number" class="form-control" min="0" name="points" [(ngModel)]="model.points" #points="ngModel"
+              [ngClass]="{ 'is-invalid': f.submitted && points.invalid }" required pattern="[0-9]+" />
+            <div *ngIf="f.submitted && points.invalid" class="invalid-feedback">
+              <div *ngIf="points.errors.required">กรุณากรอกจำนวนคะแนน</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row justify-content-md-center">
+          <label for="" class="col-md-2 col-form-label">โลโก้</label>
+          <div class="col-md-6">
+            <div class="custom-file">
+              <input type="file" (change)="onFileChanged($event)" name="image" ngModel>
+              <div class="img" *ngIf="image_url != null">
+                <img [src]="image_url" alt="logo">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer text-right">
+        <button type="button" class="btn btn-sm btn-secondary" style="margin-right: 5px" (click)="getSystem()"><i
+            class="fas fa-undo-alt"></i> ค่าเริ่มต้น</button>
+        <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-save"></i> บันทึก</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="modal fade" id="croppedImage" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [resizeToWidth]="512"
+          format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
+          (loadImageFailed)="loadImageFailed()"></image-cropper>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelCropped()">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" (click)="submitCropped()">ตกลง</button>
+      </div>
+    </div>
+  </div>
+</div>

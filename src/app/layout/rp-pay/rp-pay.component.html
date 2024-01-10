@@ -1,0 +1,84 @@
+<h3>ข้อมูลจ่ายของรางวัล</h3>
+
+<div class="p-bottom container">
+  <div class="row">
+    <div class="form-group col-sm-6 row">
+      <label for="date_start" class="col-3  col-form-label">ตั้งแต่วันที่</label>
+      <div class="col-9">
+        <input class="form-control" type="date" [value]="query.from | date:'yyyy-MM-dd'"
+          (input)="updateFromDate($event)" />
+      </div>
+    </div>
+
+    <div class="form-group col-sm-6 row">
+      <label for="date_end" class="col-2 mr-auto col-form-label">ถึง</label>
+      <div class="col-sm-10 col-9">
+        <input class="form-control" type="date" [value]="query.to | date:'yyyy-MM-dd'" (input)="updateToDate($event)" />
+      </div>
+    </div>
+
+    <div class="form-group col-sm-6 row">
+      <label for="rewardsSelect" class="col-3 col-form-label">ชื่อผู้ใช้</label>
+      <div class="col-9">
+        <select id="userSelect" class="form-control" (change)="updateSelected($event)">
+          <option selected="selected" disabled>เลิอก ชื่อผู้ใช้</option>
+          <option value="all" *ngIf="username != '[]' && username != null">ทั้งหมด</option>
+          <option *ngFor="let option of username" value="{{ option.user_id }}">
+            {{ option.user_username }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group col-sm-6 row">
+      <label class="col-2">สถานะ</label>
+      <div class="col-10">
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" id="not" name="status" value="1" (input)="updateStatus(3)"
+            class="custom-control-input">
+          <label class="custom-control-label" for="not">ยังไม่จ่าย</label>
+        </div>
+
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio" id="pay" name="status" (input)="updateStatus(4)" class="custom-control-input">
+          <label class="custom-control-label" for="pay">จ่ายแล้ว</label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th class="text-center">#</th>
+          <th>ชื่อของรางวัล</th>
+          <th class="text-center">สถานะ</th>
+          <th class="text-center">จำนวนชิ้น</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let data of dataRpPay; let i = index">
+          <td class="text-center">{{ i + 1 | number }}</td>
+          <td>{{data.exchangelist_rewards}}</td>
+          <td>{{textStatus[data.exchange_status]}}</td>
+          <td class="text-center">{{data.exchangelist_amount | number}}</td>
+        </tr>
+      </tbody>
+
+      <tfoot *ngIf="dataRpPay">
+        <tr>
+          <td class="text-right" style="font-weight: bold" colspan="3">รวม</td>
+          <td class="text-center">{{amount | number}}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="card-footer" *ngIf="dataRpPay">
+    <button type="button" class="btn btn-sm btn-info" (click)="downloadPDF()"><i class="far fa-file-pdf"></i> ดาวน์โหลด
+      PDF</button>
+  </div>
+</div>

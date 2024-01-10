@@ -1,0 +1,185 @@
+<div class="header">
+  <h3>ข้อมูลของรางวัล</h3>
+  <div class="row">
+    <div class="col-sm-auto search">
+      <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off"
+        placeholder="ค้นหา...">
+    </div>
+    <div class="col-sm-auto ml-auto text-right">
+      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#rewardsModal"
+        data-backdrop="static" data-keyboard="false" (click)="rewardsModal = 0">
+        <i class="fas fa-plus"></i>
+        <span id="text-sm"> เพิ่มรายการ</span>
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="getRewards()" style="margin-left: 0.5vw;"><i
+          class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th width="10%" class=" text-center">#</th>
+          <th width="8%" class="text-center">รหัส</th>
+          <th>ชื่อ</th>
+          <th width="10%">ราคา</th>
+          <th width="10%">คะแนน</th>
+          <th width="10%" class="text-center">จำนวน</th>
+          <th width="10%" class="text-center">สถานะ</th>
+          <th width="25%"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let rewards of dataRewards | filter:searchText; let i = index">
+          <td class="text-center"><img [src]="rewards.image_url" width="75px" height="75px" /></td>
+          <td class="text-center">{{ rewards.rewards_id }}</td>
+          <td>{{ rewards.rewards_name }}</td>
+          <td class="text-center">{{ rewards.rewards_price | currency: " " }}</td>
+          <td><i class="fas fa-coins"></i> {{ rewards.rewards_points | number }}</td>
+          <td class="text-center">{{ rewards.rewards_amount | number }}</td>
+          <td class="text-center td-sm">
+            <span *ngIf="rewards.rewards_status == 0">
+              <i class="fas fa-circle" id="fas" style="color: gray"></i>
+              <span class="badge badge-secondary" id="badge">ปิดการใช้งาน</span>
+            </span>
+            <span *ngIf="rewards.rewards_status == 1">
+              <i class="fas fa-circle" id="fas" style="color: green;;"></i>
+              <span class="badge badge-success" id="badge">เปิดการใช้งาน</span>
+            </span>
+          </td>
+          <td>
+            <a class="btn btn-sm btn-secondary" id="btn" mwlConfirmationPopover [popoverTitle]="'ออฟไลน์'"
+              [popoverMessage]="'คุณแน่ใจหรือไม่ว่าต้องการออฟไลน์รายการของรางวัลนี้ ?'" [confirmText]="'ใช่'"
+              [cancelText]="'ไม่'" placement="top" (confirm)="setStatus(rewards.rewards_id, rewards.rewards_status)"
+              confirmButtonType="danger btn-sm" cancelButtonType="default btn-sm" *ngIf="rewards.rewards_status == '1'">
+              <i class="fas fa-plug"></i><span id="text-sm"> เปลี่ยนสถานะ</span>
+            </a>
+
+            <a class="btn btn-sm btn-secondary" id="btn" mwlConfirmationPopover [popoverTitle]="'ออนไลน์'"
+              [popoverMessage]="'คุณแน่ใจหรือไม่ว่าต้องการออนไลน์รายการของรางวัลนี้ ?'" [confirmText]="'ใช่'"
+              [cancelText]="'ไม่'" placement="top" (confirm)="setStatus(rewards.rewards_id, rewards.rewards_status)"
+              confirmButtonType="success btn-sm" cancelButtonType="default btn-sm"
+              *ngIf="rewards.rewards_status == '0'">
+              <i class="fas fa-plug"></i><span id="text-sm"> เปลี่ยนสถานะ</span>
+            </a>
+
+            <button type="button" class="btn btn-sm btn-warning" id="btn2" data-toggle="modal"
+              data-target="#rewardsModal" data-backdrop="static" data-keyboard="false"
+              (click)="openModalEdit(rewards.rewards_id);">
+              <i class="far fa-edit"></i><span id="text-sm"> แก้ไข</span>
+            </button>
+
+            <a class="btn btn-sm btn-danger" id="btn" mwlConfirmationPopover [popoverTitle]="'ลบรายการของรางวัล'"
+              [popoverMessage]="'คุณแน่ใจหรือไม่ว่าต้องการลบรายการของรางวัลนี้ ?'" [confirmText]="'ใช่'"
+              [cancelText]="'ไม่'" placement="top" (confirm)="deleteRewards(rewards.rewards_id)"
+              confirmButtonType="danger btn-sm" cancelButtonType="default btn-sm">
+              <i class="far fa-trash-alt"></i><span id="text-sm"> ลบ</span>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="rewardsModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" *ngIf="rewardsModal == 0">เพิ่มรายการของรางวัล</h5>
+        <h5 class="modal-title" *ngIf="rewardsModal == 1">แก้ไขรายการของรางวัล</h5>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()" *ngIf="rewardsModal == 0">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form #f="ngForm" (ngSubmit)="rewardsForm.form.valid && onSubmitRewards()" novalidate>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-sm-4">
+              <img [src]="previewImage" width="100%">
+            </div>
+            <div class="col-sm-8">
+              <div class="form-group row">
+                <label for="" style="font-size: 11pt;"
+                  class="col-sm-4 control-label col-form-label">ชื่อของรางวัล</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control form-control-sm" id="name" name="name" ngModel
+                    [ngClass]="{ 'is-invalid': rewardsForm.submitted && rewardsForm.controls['name'].invalid }" required />
+                  <div *ngIf="rewardsForm.submitted && rewardsForm.controls['name'].invalid" class="invalid-feedback">
+                    <div *ngIf="rewardsForm.controls['name'].errors.required">กรุณากรอกชื่อของรางวัล</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="" style="font-size: 11pt;" class="col-sm-4 control-label col-form-label">ราคา</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control form-control-sm" id="price" name="price" ngModel
+                    [ngClass]="{ 'is-invalid': rewardsForm.submitted && rewardsForm.controls['price'].invalid }" required pattern="[0-9]+" />
+                  <div *ngIf="rewardsForm.submitted && rewardsForm.controls['price'].invalid" class="invalid-feedback">
+                    <div *ngIf="rewardsForm.controls['price'].errors.required">กรุณาระบุราคา</div>
+                    <div *ngIf="rewardsForm.controls['price'].errors.pattern">ระบุได้แค่ตัวเลขเท่านั้น</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="" style="font-size: 11pt;" class="col-sm-4 control-label col-form-label">คะแนน</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control form-control-sm" id="points" name="points" ngModel
+                    [ngClass]="{ 'is-invalid': rewardsForm.submitted && rewardsForm.controls['points'].invalid }" required pattern="[0-9]+" />
+                  <div *ngIf="rewardsForm.submitted && rewardsForm.controls['points'].invalid" class="invalid-feedback">
+                    <div *ngIf="rewardsForm.controls['points'].errors.required">กรุณาระบุจำนวนคะแนน</div>
+                    <div *ngIf="rewardsForm.controls['points'].errors.pattern">ระบุได้แค่ตัวเลขเท่านั้น</div>
+                  </div>
+                </div>
+              </div>
+
+              <input type="file" class="form-control-file" (change)="onFileChanged($event)" ngModel name="image"
+                accept="image/png, image/jpeg" required>
+              <input type="hidden" name="id" id="id" ngModel>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" *ngIf="rewardsModal == 0">
+          <button type="button" class="btn btn-sm btn-secondary" (click)="resetForm()"><i class="fas fa-eraser"></i>
+            ล้างข้อมูล</button>
+          <button type="submit" class="btn btn-sm btn-success" [disabled]="">
+            <i class="fas fa-save"></i> บันทึก</button>
+        </div>
+
+        <div class="modal-footer" *ngIf="rewardsModal == 1">
+          <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal" aria-label="Close"
+            (click)="closeModal()"><i class="fas fa-times"></i> ยกเลิก</button>
+          <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-save"></i> บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="croppedImage" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [resizeToWidth]="512"
+          format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
+          (loadImageFailed)="loadImageFailed()"></image-cropper>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelCropped()">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" (click)="submitCropped()">ตกลง</button>
+      </div>
+    </div>
+  </div>
+</div>

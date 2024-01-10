@@ -1,0 +1,112 @@
+<body>
+
+  <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+      <div class="sidebar-brand-icon">
+        <img src="../../../../assets/images/system/logo.svg" width="35px">
+      </div>
+      <div class="sidebar-brand-text mx-3">Smart Bin System</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/dashboard" [routerLinkActive]="['router-link-active']">
+        <i class=" fas fa-fw fa-tachometer-alt"></i>
+        <span> หน้าแรก</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#usersCollapsePages"
+        aria-expanded="true" aria-controls="usersCollapsePages">
+        <i class="fas fa-user"></i>
+        <span> ข้อมูลผู้ใช้งาน</span>
+      </a>
+      <div id="usersCollapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">ข้อมูลผู้ใช้งาน</h6>
+          <a class="collapse-item" (click)="onClick()" routerLink="/user"
+            [routerLinkActive]="['router-link-active']">ผู้ใช้</a>
+          <a class="collapse-item" (click)="onClick()" routerLink="/admin"
+            [routerLinkActive]="['router-link-active']">ผู้ดูแลระบบ</a>
+        </div>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#rewardsCollapsePages"
+        aria-expanded="true" aria-controls="rewardsCollapsePages">
+        <i class="fas fa-archive"></i>
+        <span> ข้อมูลของรางวัล</span>
+      </a>
+      <div id="rewardsCollapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">ข้อมูลของรางวัล</h6>
+          <a class="collapse-item" (click)="onClick()" routerLink="/buying"
+            [routerLinkActive]="['router-link-active']">ซื้อของรางวัล</a>
+          <a class="collapse-item" (click)="onClick()" routerLink="/rewards"
+            [routerLinkActive]="['router-link-active']">ของรางวัล</a>
+        </div>
+      </div>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" (click)="onClick()" routerLink="/smartbin" [routerLinkActive]="['router-link-active']">
+        <i class="fas fa-trash-alt"></i>
+        <span> ข้อมูลถังขยะ</span></a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" (click)="onClick()" routerLink="/pay" [routerLinkActive]="['router-link-active']">
+        <i class="fas fa-box"></i>
+        <span> จ่ายของรางวัล</span></a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" (click)="onClick()" routerLink="/sellgarbage" [routerLinkActive]="['router-link-active']">
+        <i class="fas fa-money-bill"></i>
+        <span> บันทึกการขาย</span></a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" (click)="onClick()" routerLink="/system" [routerLinkActive]="['router-link-active']">
+        <i class="fas fa-cogs"></i>
+        <span> ข้อมูลระบบ</span></a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#reportCollapsePages"
+        aria-expanded="true" aria-controls="reportCollapsePages">
+        <i class="fa fa-table"></i>
+        <span> รายงาน</span>
+      </a>
+      <div id="reportCollapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+        <div class="bg-white py-2 collapse-inner rounded">
+          <h6 class="collapse-header">รายงาน</h6>
+          <a class="collapse-item" (click)="onClick()" routerLink="/rp-exchange"
+            [routerLinkActive]="['router-link-active']">รายงานขอแลกของรางวัล</a>
+          <a class="collapse-item" (click)="onClick()" routerLink="/rp-pay"
+            [routerLinkActive]="['router-link-active']">รายงานจ่ายของรางวัล</a>
+          <a class="collapse-item" (click)="onClick()" routerLink="/rp-cumulative"
+            [routerLinkActive]="['router-link-active']">รายงานสะสมคะแนน</a>
+          <a class="collapse-item" (click)="onClick()" routerLink="/rp-alert"
+            [routerLinkActive]="['router-link-active']">รายงานแจ้งเตือนถังขยะเต็ม</a>
+          <a class="collapse-item" (click)="onClick()" routerLink="/rp-buy"
+            [routerLinkActive]="['router-link-active']">รายงานซื้อของรางวัล</a>
+          <a class="collapse-item" (click)="onClick()" routerLink="/rp-sell"
+            [routerLinkActive]="['router-link-active']">รายงานขายขยะ</a>
+        </div>
+      </div>
+    </li>
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+  </ul>
+</body>

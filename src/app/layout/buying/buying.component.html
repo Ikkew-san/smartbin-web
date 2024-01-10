@@ -1,0 +1,183 @@
+<div class="header">
+  <h3>ข้อมูลซื้อของรางวัล</h3>
+  <div class="row">
+    <div class="col-sm-auto search">
+      <input class="form-control" id="searchDate" type="date" [(ngModel)]="searchDate" />
+    </div>
+    <div class="col-sm-auto ml-auto text-right">
+      <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addBuying" data-backdrop="static"
+        data-keyboard="false" (click)="getRewardsName()">
+        <i class="fas fa-plus"></i> เพิ่มรายการซื้อ
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="getBuying()" style="margin-left: 0.5vw;">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead id="tb-buy">
+        <tr>
+          <th>รหัส</th>
+          <th>วันเดือนปี</th>
+          <th class="text-center">ราคาสุทธิ</th>
+          <th>บันทึกโดย</th>
+          <th>รายละเอียด</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let buying of dataBuying | filter: searchDate; let i = index">
+          <td>{{ buying.buy_id }}</td>
+          <td>{{ buying.buy_date }}</td>
+          <td class="text-right">{{ buying.buy_net | currency: " " }}</td>
+          <td>{{ buying.user_username }}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#Buylist" data-backdrop="static"
+              data-keyboard="false" (click)="detailBuying = i;getBuylist(buying.buy_id)">
+              <i class="fas fa-info-circle"></i> รายละเอียด
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="addBuying" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">เพิ่มรายการซื้อของรางวัล</h5>
+      </div>
+
+      <div class="modal-body" id="mbody">
+        <div class="addTable">
+          <form #addBuying="ngForm" (ngSubmit)="onSubmit()">
+            <table class="table table-sm">
+              <tr>
+                <td width="45%">
+                  <label>รายการ</label>
+                  <select class="form-control form-control-sm" name="name" ngModel required>
+                    <option value="" selected="selected" disabled></option>
+                    <option *ngFor="let option of rewardsName; let i = index" value="{{ i }}">{{ option.rewards_name }}
+                    </option>
+                  </select>
+                </td>
+                <td width="15%">
+                  <label>จำนวน</label>
+                  <input type="text" class="form-control form-control-sm" name="amount" ngModel required
+                    pattern="[0-9]+" />
+                </td>
+                <td width="20%">
+                  <label>ราคา / ชิ้น</label>
+                  <input type="text" class="form-control form-control-sm" name="price" ngModel required
+                    pattern="[0-9.]+" />
+                </td>
+                <td class="button">
+                  <button type="submit" class="btn btn-sm btn-info" [disabled]="!addBuying.valid">
+                    <i class="fas fa-plus-circle"></i> เพิ่มรายการ
+                  </button>
+                </td>
+              </tr>
+            </table>
+          </form>
+        </div>
+
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th width="8%"></th>
+              <th class="text-center" width="10%">#</th>
+              <th>รายการ</th>
+              <th class="text-center" width="15%">จำนวน</th>
+              <th class="text-center" width="20%">ราคา / ชิ้น</th>
+              <th class="text-center" width="20%">ราคารวม</th>
+            </tr>
+          </thead>
+
+          <tbody *ngFor="let value of valueForm; let i = index">
+            <tr>
+              <td class="text-right">
+                <a class="fas fa-minus-circle fa-lg" style="color: rgb(241, 39, 12);;" (click)="removeBuylist(i)"></a>
+              </td>
+              <td class="text-center">{{ i + 1 }}</td>
+              <td>{{ value.name }}</td>
+              <td class="text-center">{{ value.amount | number }}</td>
+              <td class="text-right">{{ value.price | currency: " "  }}</td>
+              <td class="text-right">{{ value.price * value.amount | currency: " "  }}</td>
+            </tr>
+          </tbody>
+
+          <tfoot>
+            <tr>
+              <td colspan="5" class="text-right">ราคาสุทธิ</td>
+              <td class="text-right">{{ valueNet | currency: " " }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-secondary" (click)="closeModalBuying()">
+          <i class="far fa-times-circle"></i> ปิด
+        </button>
+        <button type="button" class="btn btn-sm btn-success" (click)="setBuylist()" [disabled]="btnAddBuying">
+          <i class="fas fa-save"></i> บันทึก
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="Buylist" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">รายการซื้อของรางวัล</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="dataBuylist_total = 0; dataBuylist = null;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="row" style="margin-top: 0.5rem; margin-bottom: 0.35rem" *ngIf="dataBuylist != null">
+          <div class="col-auto"><strong>วันที่</strong> {{dataBuylist[0]['buy_date']}}</div>
+          <div class="col-auto ml-auto"><strong>บันทึกโดย</strong> {{dataBuylist[0]['user_username']}}</div>
+        </div>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th class="text-center" width="8%">#</th>
+              <th>รายการ</th>
+              <th class="text-center" width="17%">จำนวน</th>
+              <th class="text-center" width="17%">ราคา/ชิ้น</th>
+              <th class="text-center" width="17%">ราคารวม</th>
+            </tr>
+          </thead>
+
+          <tbody *ngFor="let data of dataBuylist; let i = index">
+            <tr>
+              <td class="text-center">{{ i + 1 }}</td>
+              <td>{{ data.rewards_name }}</td>
+              <td class="text-center">{{ data.buylist_amount | number }}</td>
+              <td class="text-right">{{ data.buylist_price | currency: " "  }}</td>
+              <td class="text-right">{{ data.buylist_total | currency: " "  }}</td>
+            </tr>
+          </tbody>
+
+          <tfoot>
+            <tr>
+              <td class="text-right" colspan="4">ราคาสุทธิ</td>
+              <td class="text-right">{{ dataBuylist_total | currency: " "  }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

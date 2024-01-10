@@ -1,0 +1,398 @@
+<div class="header">
+  <h3>ข้อมูลผู้ดูแลระบบ</h3>
+  <div class="row">
+    <div class="col-sm-auto search">
+      <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off"
+        placeholder="ค้นหา...">
+    </div>
+    <div class="col-sm-auto ml-auto text-right">
+      <button class="btn btn-success" (click)="addModal = true" data-toggle="modal" data-target="#addModal"
+        data-backdrop="static" data-keyboard="false">
+        <i class="fas fa-user-plus"></i> เพิ่มผู้ใช้
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="getUser()" style="margin-left: 0.5vw;">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-danger">
+        <tr>
+          <th>#</th>
+          <th>ชื่อผู้ใช้</th>
+          <th>ชื่อ - นามสกุล</th>
+          <th>อีเมล</th>
+          <th>เบอร์โทรศัพท์</th>
+          <th>คะแนน</th>
+          <th>สถานะ</th>
+          <th>รายละเอียด</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let column of dataTable |  filter:searchText; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{column.user_username}}</td>
+          <td>{{column.user_firstname}} {{column.user_lastname}}</td>
+          <td>{{column.user_email}}</td>
+          <td>{{column.user_telephone}}</td>
+          <td><i class="fas fa-coins"></i> {{column.user_points | number}}</td>
+          <td>
+            <span class="badge badge-pill" *ngIf="column.user_status == '0'" style="color: rgb(241, 39, 12);;">
+              <i class="fa fa-circle" aria-hidden="true"></i> &nbsp;ระงับการใช้งาน</span>
+            <span class="badge badge-pill" *ngIf="column.user_status == '1'" style="color: rgb(4, 143, 4);;"> <i
+                class="fa fa-circle" aria-hidden="true"></i> &nbsp;ปกติ</span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-warning" (click)="getDetailuser(column.user_id); detailModal = true;"
+              data-toggle="modal" data-target="#detailModal" data-backdrop="static" data-keyboard="false">
+              <i class="fas fa-info-circle"></i> รายละเอียด
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="addModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form name="adminForm" (ngSubmit)="adminForm.form.valid && onSubmit()" #f="ngForm" novalidate>
+        <div class="modal-header">
+          <h5 class="modal-title">เพิ่มผู้ใช้</h5>
+          <button type="button" (click)="addModal = false; adminForm.resetForm();" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-md-4 text-center">
+                <img [src]="previewImage" class="rounded-circle" width="100%" />
+                <input type="file" class="form-control-file" (change)="onFileChanged($event)" name="image" ngModel />
+              </div>
+              <div class="col-md-8">
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label>ชื่อจริง</label>
+                    <input type="text" class="form-control" placeholder="ชื่อจริง" name="firstname" id="firstname"
+                      [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['firstname'].invalid }"
+                      ngModel required />
+                    <div *ngIf="adminForm.submitted && adminForm.controls['firstname'].invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="adminForm.controls['firstname'].errors.required">กรุณากรอกชื่อจริง</div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label>นามสกุล</label>
+                    <input type="text" class="form-control" placeholder="นามสกุล" name="lastname" id="lastname" ngModel
+                      [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['lastname'].invalid }"
+                      required />
+                    <div *ngIf="adminForm.submitted && adminForm.controls['lastname'].invalid" class="invalid-feedback">
+                      <div *ngIf="adminForm.controls['lastname'].errors.required">กรุณากรอกนามสกุล</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label>วันเดือนปีเกิด</label>
+                    <input type="date" class="form-control" name="birthday" id="birthday" ngModel
+                      [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['birthday'].invalid }"
+                      required />
+                    <div *ngIf="adminForm.submitted && adminForm.controls['birthday'].invalid" class="invalid-feedback">
+                      <div *ngIf="adminForm.controls['birthday'].errors.required">กรุณากรอกวันเดือนปีเกิด</div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label>เพศ</label>
+                    <br />
+                    <div class="custom-control custom-radio custom-control-inline">
+                      <input type="radio" class="custom-control-input" name="gender" id="male" value="1" ngModel
+                        [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['gender'].invalid }"
+                        required />
+                      <label class="custom-control-label" for="male">ผู้ชาย</label>
+                    </div>
+
+                    <div class="custom-control custom-radio custom-control-inline">
+                      <input type="radio" class="custom-control-input" name="gender" id="female" value="2" ngModel
+                        [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['gender'].invalid }"
+                        required />
+                      <label class="custom-control-label" for="female">ผู้หญิง</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label>อีเมล</label>
+                    <input type="email" class="form-control" placeholder="อีเมล" name="email" id="email" ngModel
+                      [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['email'].invalid }" required
+                      email />
+                    <div *ngIf="adminForm.submitted && adminForm.controls['email'].invalid" class="invalid-feedback">
+                      <div *ngIf="adminForm.controls['email'].errors.required">กรุณากรอกอีเมล</div>
+                      <div *ngIf="adminForm.controls['email'].errors.email">กรุณากรอกอีเมลให้ถูกต้อง</div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label>เบอร์โทรศัพท์</label>
+                    <input type="tel" class="form-control" placeholder="เบอร์โทรศัพท์" name="telephone" id="telephone"
+                      [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['telephone'].invalid }"
+                      ngModel maxlength="10" pattern="\d{10}" required />
+                    <div *ngIf="adminForm.submitted && adminForm.controls['telephone'].invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="adminForm.controls['telephone'].errors.pattern">กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง</div>
+                      <div *ngIf="adminForm.controls['telephone'].errors.maxlength">กรุณากรอกเบอร์โทรศัพท์ให้ครบ</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <div class="col-md-6">
+                    <label>ชื่อผู้ใช้</label>
+                    <input type="text" class="form-control" placeholder="ชื่อผู้ใช้" name="username" id="username"
+                      [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['username'].invalid }"
+                      ngModel required minlength="6" maxLength="25" pattern="[A-Za-z0-9._]+" />
+                    <div *ngIf="adminForm.submitted && adminForm.controls['username'].invalid" class="invalid-feedback">
+                      <div *ngIf="adminForm.controls['username'].errors.required">กรุณากรอกชื่อผู้ใช้</div>
+                      <div *ngIf="adminForm.controls['username'].errors.pattern">สามารถใช้ตัวอักษรพิเศษได้แค่ _ และ .
+                        เท่านั้น</div>
+                      <div
+                        *ngIf="adminForm.controls['username'].errors.minlength || adminForm.controls['username'].errors.maxLength">
+                        ชื่อผู้ใช้ต้องมีอย่างน้อย 6 ตัวอักษร ไม่เกิน 25 ตัวอักษร</div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label>รหัสผ่าน</label>
+                    <input type="password" class="form-control" placeholder="รหัสผ่าน" name="password" id="password"
+                      [ngClass]="{ 'is-invalid': adminForm.submitted && adminForm.controls['password'].invalid }"
+                      ngModel required minlength="6" pattern="[A-Za-z0-9]+" />
+                    <div *ngIf="adminForm.submitted && adminForm.controls['password'].invalid" class="invalid-feedback">
+                      <div *ngIf="adminForm.controls['password'].errors.required">กรุณากรอกรหัสผ่าน</div>
+                      <div *ngIf="adminForm.controls['password'].errors.pattern">ไม่สามารถกรอกตัวอักษรพิเศษได้</div>
+                      <div
+                        *ngIf="adminForm.controls['password'].errors.minlength || adminForm.controls['password'].errors.maxLength">
+                        รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร ไม่เกิน 25 ตัวอักษร</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="reset" class="btn btn-secondary"><i class="fas fa-eraser"></i> ล้างข้อมูล</button>
+          <button type="submit" class="btn btn-success"><i class="fas fa-save"></i> บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="detailModal">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <form id="edit" (ngSubmit)="editAdminForm.form.valid && onSubmit()" #e="ngForm" novalidate>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-sm-5 avatar">
+              <img [src]="imageDetail" class="rounded-circle" width="100%">
+            </div>
+            <div class="col-sm-7">
+              <div class="header">
+                <button type="button" class="close" (click)="detailModal = false; editData = false; editAdminForm.resetForm();"
+                  data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h2 *ngIf="detailUser != null">{{detailUser.user_username}}</h2>
+              </div>
+              <span>ผู้ดูแลระบบ</span>
+              <hr>
+              <div class="container">
+                <div class="row">
+                  <label class="col-sm-4 control-label col-form-label" for="e-firstname">ชื่อจริง</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control form-control-sm" name="firstname" id="e-firstname"
+                      [ngClass]="{ 'is-invalid': editAdminForm.submitted && editAdminForm.controls['firstname'].invalid }"
+                      ngModel required />
+                    <div *ngIf="editAdminForm.submitted && editAdminForm.controls['firstname'].invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="editAdminForm.controls['firstname'].errors.required">กรุณากรอกชื่อจริง</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <label class="col-sm-4 control-label col-form-label" for="e-lastname">นามสกุล</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control form-control-sm" name="lastname" id="e-lastname"
+                      [ngClass]="{ 'is-invalid': editAdminForm.submitted && editAdminForm.controls['lastname'].invalid }"
+                      ngModel required />
+                    <div *ngIf="editAdminForm.submitted && editAdminForm.controls['lastname'].invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="editAdminForm.controls['lastname'].errors.required">กรุณากรอกนามสกุล</div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="row">
+                  <label class="col-sm-4 control-label col-form-label" for="e-birthday">วันเกิด</label>
+                  <div class="col-sm-8">
+                    <input type="date" class="form-control form-control-sm" name="birthday" id="e-birthday" ngModel
+                      [ngClass]="{ 'is-invalid': editAdminForm.submitted && editAdminForm.controls['birthday'].invalid }"
+                      required />
+                    <div *ngIf="editAdminForm.submitted && editAdminForm.controls['birthday'].invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="editAdminForm.controls['birthday'].errors.required">กรุณากรอกวันเดือนปีเกิด</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <label class="col-sm-4 control-label col-form-label" for="gender">เพศ</label>
+                  <div class="col-sm-8">
+                    <div class="custom-control custom-radio custom-control-inline">
+                      <input type="radio" class="custom-control-input" name="gender" id="e-male" value="1"
+                        [ngClass]="{ 'is-invalid': editAdminForm.submitted && editAdminForm.controls['gender'].invalid }"
+                        required ngModel />
+
+                      <label class="custom-control-label" for="e-male">ผู้ชาย</label>
+                    </div>
+
+                    <div class="custom-control custom-radio custom-control-inline">
+                      <input type="radio" class="custom-control-input" name="gender" id="e-female" value="2"
+                        [ngClass]="{ 'is-invalid': editAdminForm.submitted && editAdminForm.controls['gender'].invalid }"
+                        required ngModel />
+
+                      <label class="custom-control-label" for="e-female">ผู้หญิง</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <label class="col-sm-4 control-label col-form-label" for="e-email">อีเมล</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control form-control-sm" name="email" id="e-email"
+                      [ngClass]="{ 'is-invalid': editAdminForm.submitted && editAdminForm.controls['email'].invalid }"
+                      required ngModel email />
+                    <div *ngIf="editAdminForm.submitted && editAdminForm.controls['email'].invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="editAdminForm.controls['email'].errors.required">กรุณากรอกอีเมล</div>
+                      <div *ngIf="editAdminForm.controls['email'].errors.email">กรุณากรอกอีเมลให้ถูกต้อง</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <label class="col-sm-4 control-label col-form-label" for="e-telephone">เบอร์โทรศัพท์</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="col-12 form-control form-control-sm" name="telephone" id="e-telephone"
+                      [ngClass]="{ 'is-invalid': editAdminForm.submitted && editAdminForm.controls['telephone'].invalid }"
+                      ngModel maxlength="10" pattern="\d{10}" required />
+                    <div class="col-12" *ngIf="editAdminForm.submitted && editAdminForm.controls['telephone'].invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="editAdminForm.controls['telephone'].errors.required">กรุณากรอกเบอร์โทรศัพท์</div>
+                      <div *ngIf="editAdminForm.controls['telephone'].errors.pattern">กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง
+                      </div>
+                      <div *ngIf="editAdminForm.controls['telephone'].errors.maxlength">กรุณากรอกเบอร์โทรศัพท์ให้ครบ
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <label class="col-sm-4 control-label col-form-label" for="e-password">รหัสผ่าน</label>
+                  <div class="col-sm-8">
+                    <input type="password" class="form-control form-control-sm" name="password" id="e-password"
+                      [ngClass]="{ 'is-invalid': editAdminForm.submitted && editAdminForm.controls['password'].invalid }"
+                      ngModel required minlength="6" pattern="[A-Za-z0-9]+" />
+                    <div *ngIf="editAdminForm.submitted && editAdminForm.controls['password'].invalid"
+                      class="invalid-feedback">
+                      <div *ngIf="editAdminForm.controls['password'].errors.required">กรุณากรอกรหัสผ่าน</div>
+                      <div *ngIf="editAdminForm.controls['password'].errors.pattern">ไม่สามารถกรอกตัวอักษรพิเศษได้</div>
+                      <div
+                        *ngIf="editAdminForm.controls['password'].errors.minlength || editAdminForm.controls['password'].errors.maxLength">
+                        รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร ไม่เกิน 25 ตัวอักษร</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-12">
+                    <input type="file" class="form-control-file" (change)="onFileChanged($event)" name="image"
+                      id="e-image" style="display: none" ngModel>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer" id="detailModal" style="background: #f5c6cb"
+          *ngIf="detailUser != null && editData == false">
+          <a class="btn" (click)="openEdit()">
+            <i class="fas fa-pen fa-lg"></i>
+          </a>
+
+          <a class="btn" mwlConfirmationPopover [popoverTitle]="'ปิดบัญชีผู้ใช้'"
+            [popoverMessage]="'คุณแน่ใจหรือไม่ว่าต้องการระงับการใช้งานผู้ใช้นี้ ?'" [confirmText]="'ใช่'"
+            [cancelText]="'ไม่'" placement="top" (confirm)="setStatus(detailUser.user_id)"
+            confirmButtonType="danger btn-sm" cancelButtonType="default btn-sm" [appendToBody]="true"
+            *ngIf="detailUser.user_status == '1'">
+            <i class="fas fa-user fa-lg"></i>
+          </a>
+
+          <a class="btn" mwlConfirmationPopover [popoverTitle]="'เปิดบัญชีผู้ใช้'"
+            [popoverMessage]="'คุณแน่ใจหรือไม่ว่าต้องการเปิดบัญชีผู้ใช้นี้ ?'" [confirmText]="'ใช่'"
+            [cancelText]="'ไม่'" placement="top" (confirm)="setStatus(detailUser.user_id)"
+            confirmButtonType="success btn-sm" cancelButtonType="default btn-sm" [appendToBody]="true"
+            *ngIf="detailUser.user_status == '0'">
+            <i class="fas fa-user-slash fa-lg"></i>
+          </a>
+
+          <a class="btn" mwlConfirmationPopover [popoverTitle]="'ลบบัญชีผู้ใช้'"
+            [popoverMessage]="'คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีผู้ใช้นี้ ?'" [confirmText]="'ใช่'" [cancelText]="'ไม่'"
+            placement="top" (confirm)="deleteUser(detailUser.user_id)" confirmButtonType="danger btn-sm"
+            cancelButtonType="default btn-sm" [appendToBody]="true">
+            <i class="fas fa-trash fa-lg"></i>
+          </a>
+        </div>
+
+        <div class="modal-footer" id="editModal" style="background: #f5c6cb" *ngIf="editData == true">
+          <button type="button" class="btn btn-danger" (click)="closeEdit(detailUser.user_id)">ยกเลิก</button>
+          <button type="submit" class="btn btn-success">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="croppedImage" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <image-cropper [imageChangedEvent]="imageChangedEvent" [maintainAspectRatio]="true" [resizeToWidth]="512"
+          format="png" (imageCropped)="imageCropped($event)" (imageLoaded)="imageLoaded()"
+          (loadImageFailed)="loadImageFailed()"></image-cropper>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelCropped()">ยกเลิก</button>
+        <button type="button" class="btn btn-primary" (click)="submitCropped()">ตกลง</button>
+      </div>
+    </div>
+  </div>
+</div>

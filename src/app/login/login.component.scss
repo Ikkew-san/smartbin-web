@@ -1,0 +1,35 @@
+section {
+    width: 100%;
+    padding: 0 7%;
+    display: table;
+    margin: 0;
+    max-width: none;
+    height: 100vh;
+  }
+  
+  .login {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  p.card-subtitle {
+    margin-bottom: 1rem;
+  }
+  
+  .btn-block {
+    background-color: #63a094;
+    color: whitesmoke;
+  }
+  
+  h3 {
+    font-weight: bold;
+    margin: 0.75rem 0;
+  }
+  
+  .text-alert {
+    font-size: 90%;
+    color: #dc3545;
+    margin-bottom: 0.5rem;
+  }
+  

@@ -1,0 +1,46 @@
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+  <!-- Topbar Navbar -->
+  <ul class="navbar-nav ml-auto">
+    <!-- Nav Item - Alerts -->
+    <li class="nav-item dropdown no-arrow mx-1">
+      <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+        <i class="fas fa-exclamation-triangle fa-fw fa-lg"></i>
+        <!-- Counter - Alerts -->
+        <span class="badge badge-danger badge-counter" *ngIf="amountAlert > 0">{{amountAlert}}</span>
+      </a>
+      <!-- Dropdown - Alerts -->
+      <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+        aria-labelledby="alertsDropdown" *ngIf="dataAlert != '[] && dataAlert != null' ">
+        <h6 class="dropdown-header">
+          แจ้งเตือนถังเต็ม
+        </h6>
+        <div *ngFor="let data of dataAlert">
+          <a class="dropdown-item d-flex align-items-center" routerLink="/smartbin"
+            [routerLinkActive]="['router-link-active']">
+            <div>
+              <div class="small text-gray-500">{{data.alert_date}}</div>
+              <span class="font-weight-bold">{{data.smartbin_hostname}}</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </li>
+
+    <div class="topbar-divider d-none d-sm-block"></div>
+
+    <li class="nav-item no-arrow">
+      <a class="nav-link">
+        <span class="mr-2 d-none d-lg-inline text-gray-600 small">คุณ {{ dataUser["name"] }}</span>
+        <img class="img-profile rounded-circle" [src]="image_url" />
+      </a>
+    </li>
+
+    <li class="nav-item no-arrow mx-1">
+      <a class="nav-link" (click)="onLoggedout()">
+        <i class="fas fa-sign-out-alt fa-fw"></i>
+        <span class="ml-2 d-none d-lg-inline text-gray-600 small">ออกจากระบบ</span>
+      </a>
+    </li>
+  </ul>
+</nav>

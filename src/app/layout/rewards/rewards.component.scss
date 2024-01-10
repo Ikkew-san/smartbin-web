@@ -1,0 +1,72 @@
+.header {
+  margin-bottom: 0.5em;
+
+  .search,
+  .col-sm-auto {
+    margin-top: 0.5em;
+    @media (min-width: 665px) {
+      input {
+        width: 25rem;
+      }
+    }
+  }
+
+  h3 {
+    font-weight: bold;
+  }
+}
+
+table {
+  thead {
+    background: #5c968a;
+    color: rgb(250, 250, 250);
+  }
+
+  #btn {
+    margin-right: 0.5rem;
+    color: #fff;
+  }
+
+  #btn2 {
+    margin-right: 0.5rem;
+  }
+
+  #middle {
+    vertical-align: middle !important;
+
+    label {
+      margin: 0;
+    }
+  }
+}
+
+@media (max-width: 1199.98px) {
+  #text-sm {
+    display: none;
+  }
+
+  .td-sm {
+    text-align: center;
+
+    #fas {
+      display: inline;
+    }
+
+    #badge {
+      display: none;
+    }
+  }
+}
+
+@media (min-width: 1199.98px) {
+  .td-sm {
+    #fas {
+      display: none;
+    }
+  }
+}
+
+.table th,
+.table td {
+  white-space: nowrap;
+}

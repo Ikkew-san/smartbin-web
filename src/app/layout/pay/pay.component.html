@@ -1,0 +1,173 @@
+<div class="header">
+  <div class="row">
+    <div class="col-auto">
+      <h3>ข้อมูลจ่ายของรางวัล</h3>
+    </div>
+    <div class="col-auto ml-auto">
+      <button type="button" class="btn btn-secondary" (click)="getExchange();getExchangeNotFinish();">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="accordion" id="accordionExchange">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <button class="btn btn-sm btn-link" type="button" data-toggle="collapse" data-target="#exchangeCollapseOne"
+        aria-expanded="false" aria-controls="exchangeCollapseOne">
+        ยังไม่ได้รับของรางวัล
+      </button>
+    </div>
+
+    <div id="exchangeCollapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordionExchange">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>รหัสการแลก</th>
+              <th>วันเวลาแลกของรางวัล</th>
+              <th>ผู้แลกของรางวัล</th>
+              <th class="text-center">สถานะ</th>
+              <th>เปลี่ยนสถานะล่าสุด</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody *ngFor="let notFinish of dataNotFinish">
+            <tr>
+              <td>{{notFinish.exchange_id}}</td>
+              <td>{{notFinish.exchange_created_at}}</td>
+              <td>{{notFinish.user_username}}</td>
+              <td class="text-center">{{status[notFinish.exchange_status]}}</td>
+              <td>{{notFinish.exchange_updated_at}}</td>
+              <td>
+                <button class="btn btn-sm btn-warning" style="margin-right: 10px;" data-toggle="modal"
+                  data-target="#exchangelistModal" data-backdrop="static" data-keyboard="false"
+                  (click)="exchangeID = notFinish.exchange_id; getExchangelist(exchangeID)">
+                  <i class="fas fa-info-circle"></i> รายละเอียด
+                </button>
+
+                <button class="btn btn-sm btn-secondary" style="margin-right: 10px;" [disabled]="notFinish.disabled"
+                  mwlConfirmationPopover [popoverTitle]="'เปลี่ยนสถานะ'"
+                  [popoverMessage]="'คุณแน่ใจหรือไม่ ว่าต้องการเปลี่ยนสถานะขอแลกรายการนี้?'" [confirmText]="'ใช่'"
+                  [cancelText]="'ไม่'" placement="top" (confirm)="statusExchange(notFinish.exchange_id)"
+                  confirmButtonType="success btn-sm" cancelButtonType="default btn-sm" [appendToBody]="true">
+                  <i class="fas fa-exchange-alt"></i> เปลี่ยนสถานะ
+                </button>
+
+                <button class="btn btn-sm btn-danger" mwlConfirmationPopover [popoverTitle]="'ยกเลิกการขอแลก'"
+                  [popoverMessage]="'คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการขอแลกนี้ ?'" [confirmText]="'ใช่'"
+                  [cancelText]="'ไม่'" placement="top" (confirm)="cancelExchange(notFinish.exchange_id)"
+                  confirmButtonType="success btn-sm" cancelButtonType="default btn-sm" [appendToBody]="true">
+                  <i class="fas fa-ban"></i> ยกเลิก
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" id="headingTwo">
+      <button class="btn btn-sm btn-link collapsed" type="button" data-toggle="collapse"
+        data-target="#exchangeCollapseTwo" aria-expanded="true" aria-controls="exchangeCollapseTwo">
+        ทั้งหมด
+      </button>
+    </div>
+
+    <div id="exchangeCollapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordionExchange">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>รหัสการแลก</th>
+              <th>วันเวลาแลกของรางวัล</th>
+              <th>ผู้แลกของรางวัล</th>
+              <th>สถานะ</th>
+              <th>เปลี่ยนสถานะล่าสุด</th>
+              <th>ผู้มอบของรางวัล</th>
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody *ngFor="let data of dataExchange">
+            <tr>
+              <td>{{data.exchange_id}}</td>
+              <td>{{data.exchange_created_at}}</td>
+              <td>{{data.user_username}}</td>
+              <td>{{status[data.exchange_status]}}</td>
+              <td>{{data.exchange_updated_at}}</td>
+              <td>{{data.admin}}</td>
+              <td>
+                <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#exchangelistModal"
+                  data-backdrop="static" data-keyboard="false" (click)="getExchangelist(data.exchange_id)">
+                  <i class="fas fa-info-circle"></i> รายละเอียด
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exchangelistModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">รายละเอียดการแลกของรางวัล</h5>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>รายการ</th>
+              <th>จำนวน/ชิ้น</th>
+              <th>คะแนนรวม</th>
+              <th>สถานะ</th>
+              <th *ngIf="exchangeStatus == 2"></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let dt of dataExchangelist; let i = index;">
+              <td>{{i + 1}}</td>
+              <td>{{dt.rewards_name}}</td>
+              <td>{{dt.exchangelist_amount}}</td>
+              <td>{{dt.exchangelist_points}}</td>
+              <td>{{exchangelistStatus[dt.exchangelist_status]}}</td>
+              <td *ngIf="exchangeStatus == 2">
+                <button class="btn btn-sm btn-secondary" style="margin-right: 10px;" [disabled]="dt.disabled"
+                  mwlConfirmationPopover [popoverTitle]="'เปลี่ยนสถานะ'"
+                  [popoverMessage]="'คุณแน่ใจหรือไม่ ว่าของรางวัลรายการนี้พร้อมจ่ายแล้ว?'" [confirmText]="'ใช่'"
+                  [cancelText]="'ไม่'" placement="top"
+                  (confirm)="statusExchangelist(dt.exchangelist_id, dt.exchange_id)" confirmButtonType="success btn-sm"
+                  cancelButtonType="default btn-sm" [appendToBody]="true">
+                  <i class="fas fa-exchange-alt"></i> เปลี่ยนสถานะ
+                </button>
+
+                <button class="btn btn-sm btn-danger" mwlConfirmationPopover [popoverTitle]="'ยกเลิกรายการแลกของรางวัล'"
+                  [popoverMessage]="'คุณแน่ใจหรือไม่ ว่าต้องการยกเลิกรายการนี้?'" [confirmText]="'ใช่'"
+                  [cancelText]="'ไม่'" placement="top"
+                  (confirm)="cancelExchangelist(dt.exchangelist_id, dt.exchange_id)" confirmButtonType="danger btn-sm"
+                  cancelButtonType="default btn-sm" [appendToBody]="true" [disabled]="dt.exchangelist_status == 0">
+                  <i class="fas fa-ban"></i> ยกเลิก
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

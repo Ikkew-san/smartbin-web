@@ -1,0 +1,169 @@
+<div class="header">
+  <h3>ข้อมูลถังขยะ</h3>
+  <div class="row">
+    <div class="col-sm-auto search">
+      <input class="form-control" type="text" name="search" [(ngModel)]="searchText" autocomplete="off"
+        placeholder="ค้นหา...">
+    </div>
+    <div class="col-sm-auto ml-auto text-right">
+      <button class="btn btn-success" (click)="actionModal = 'add'" data-toggle="modal" data-target="#smartbinModal"
+        data-backdrop="static" data-keyboard="false">
+        <i class="fas fa-plus"></i> ลงทะเบียนถังขยะ
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="getSmartbin()" style="margin-left: 0.5vw;">
+        <i class="fas fa-sync-alt"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th class="text-center">#</th>
+          <th>โฮสเนม</th>
+          <th>ไอพีแอดเดรส</th>
+          <th>ที่ตั้ง</th>
+          <th>สถานะถังขยะ</th>
+          <th>กำลังเข้าสู่ระบบ</th>
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let data of dataSmartbin | filter:searchText; let i = index;">
+          <td class="text-center">{{ i + 1 }}</td>
+          <td>{{data.smartbin_hostname}}</td>
+          <td>{{data.smartbin_ipaddress}}</td>
+          <td>{{data.smartbin_address}}</td>
+          <td class="text-right">
+            <form #s="ngForm" (ngSubmit)="putStatus(i, data.smartbin_id)">
+              <select class="form-control form-control-sm" name="status" ngModel={{data.smartbin_status}}>
+                <option value="3">ปิดปรับปรุง</option>
+                <option value="1">เปิดการใช้งาน</option>
+                <option value="0" hidden>ปิดการใช้งาน</option>
+                <option value="2" hidden>ถังเต็ม</option>
+              </select>
+
+              <div *ngIf="s.value.status != data.smartbin_status">
+                <button type="button" class="btn btn-sm btn-secondary"
+                  (click)="s.controls['status'].setValue(data.smartbin_status)">
+                  <i class="fas fa-undo-alt"></i> คืนค่า
+                </button>
+
+                <button type="submit" class="btn btn-sm btn-success">
+                  <i class="fas fa-save"></i> บันทึก
+                </button>
+              </div>
+            </form>
+          </td>
+          <td>{{data.user_username}}</td>
+          <td>
+            <button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#QrcodeModal"
+              data-backdrop="static" data-keyboard="false" (click)="qrData = data.smartbin_hostname">
+              พิมพ์ QR Code
+            </button>
+
+            <button type="button" class="btn btn-sm btn-warning" (click)="editModel(data.smartbin_id)"
+              style="margin-left: 0.5vw;">
+              <i class="far fa-edit"></i> แก้ไข
+            </button>
+
+            <button type="button" class="btn btn-sm btn-danger" mwlConfirmationPopover [popoverTitle]="'ลบรายการถัง'"
+              [popoverMessage]="'คุณแน่ใจหรือไม่ว่าต้องการลบรายการถังนี้ ?'" [confirmText]="'ใช่'" [cancelText]="'ไม่'"
+              placement="top" (confirm)="deleteBin(data.smartbin_id)" confirmButtonType="danger btn-sm"
+              cancelButtonType="default btn-sm" [appendToBody]="true" style="margin-left: 0.5vw;">
+              <i class="fas fa-times"></i> ลบ
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="smartbinModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" *ngIf="actionModal == 'add'">
+          ลงทะเบียนถังขยะ
+        </h5>
+        <h5 class="modal-title" *ngIf="actionModal == 'edit'">
+          แก้ไขข้อมูลถังขยะ
+        </h5>
+        <button type="button" class="close" (click)="closeModel()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form #f="ngForm" (ngSubmit)="smartbinForm.form.valid && onSubmit()" novalidate>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-6 form-group">
+                <label for="hostname">โฮสเนม</label>
+                <input type="text" class="form-control" id="hostname" name="hostname" ngModel required
+                  [ngClass]="{ 'is-invalid': smartbinForm.submitted && smartbinForm.controls['hostname'].invalid }" />
+                <div *ngIf="smartbinForm.submitted && smartbinForm.controls['hostname'].invalid"
+                  class="invalid-feedback">
+                  <div *ngIf="smartbinForm.controls['hostname'].errors.required">กรุณากรอกโฮสเนม</div>
+                </div>
+              </div>
+
+              <div class="col-6 form-group">
+                <label for="ipaddress">หมายเลขไอพี</label>
+                <input type="text" class="form-control" id="ipaddress" name="ipaddress" ngModel required
+                  pattern="[0-9.]+"
+                  [ngClass]="{ 'is-invalid': smartbinForm.submitted && smartbinForm.controls['ipaddress'].invalid }" />
+                <div *ngIf="smartbinForm.submitted && smartbinForm.controls['ipaddress'].invalid"
+                  class="invalid-feedback">
+                  <div *ngIf="smartbinForm.controls['ipaddress'].errors.required">กรุณากรอกหมายเลขไอพี</div>
+                  <div *ngIf="smartbinForm.controls['ipaddress'].errors.pattern">กรุณากรอกให้ถูกต้อง</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="address">ที่ตั้ง</label>
+              <input type="text" class="form-control" id="address" name="address" ngModel required
+                [ngClass]="{ 'is-invalid': smartbinForm.submitted && smartbinForm.controls['address'].invalid }" />
+              <div *ngIf="smartbinForm.submitted && smartbinForm.controls['address'].invalid"
+                class="invalid-feedback">
+                <div *ngIf="smartbinForm.controls['address'].errors.required">กรุณากรอกที่ตั้ง</div>
+              </div>
+            </div>
+
+            <input type="hidden" name="id" ngModel />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="reset" class="btn btn-sm btn-secondary" *ngIf="actionModal == 'add'">ล้างข้อมูล</button>
+          <button type="button" class="btn btn-sm btn-secondary" *ngIf="actionModal == 'edit'"
+            (click)="findSmartbin()">ค่าเริ่มต้น</button>
+          <button type="submit" class="btn btn-sm btn-success" [disabled]="!f.valid">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="QrcodeModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <qrcode id="qrcode" [qrdata]="qrData" [usesvg]="true" [level]="'L'"></qrcode>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-info" (click)="printQrcode()"><i class="fas fa-print"></i> พิมพ์</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close"><i
+            class="fas fa-times"></i> ปิด</button>
+      </div>
+    </div>
+  </div>
+</div>

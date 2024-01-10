@@ -1,0 +1,64 @@
+.header {
+  margin-bottom: 0.5em;
+
+  .search,
+  .col-sm-auto {
+    margin-top: 0.5em;
+    @media (min-width: 665px) {
+      input {
+        width: 25rem;
+      }
+    }
+  }
+
+  h3 {
+    font-weight: bold;
+  }
+}
+
+table {
+  margin-bottom: 5px;
+
+  tr {
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .modal-dialog {
+    max-width: 650px;
+  }
+}
+
+#detailModal {
+  .col-sm-7 {
+    .col-sm-8 {
+      align-self: center;
+
+      label {
+        font-size: 0.875rem;
+      }
+    }
+  }
+
+  .fa-user {
+    padding: 0 4px;
+  }
+
+  .custom-control-inline {
+    margin-right: 0.2rem;
+    margin-left: 0.2rem;
+  }
+
+  #detailModal.modal-footer {
+    justify-content: center;
+  }
+
+  #detailModal.modal-footer > :not(:last-child) {
+    margin-right: 0.75rem;
+  }
+
+  #detailModal.modal-footer > :not(:first-child) {
+    margin-left: 0.75rem;
+  }
+}
